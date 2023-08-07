@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+	<PropertyGroup>
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+		<LangVersion>latest</LangVersion>
+		<NeutralLanguage>en-US</NeutralLanguage>
+		<OutputPath>$(MSBuildThisFileDirectory)Output\</OutputPath>
+		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+		<WarningLevel>9999</WarningLevel>
+	</PropertyGroup>
+</Project>
