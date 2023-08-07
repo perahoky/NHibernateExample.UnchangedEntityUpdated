@@ -1,10 +1,10 @@
 # NHibernateExample.UnchangedEntityUpdated
 An NHibernate example which shows a entity is updated despite its not changed. 
-
-I'm using FluentNHibernate for this example.
+FluentNHibernate** for this example.
 The following is pseudocode.
 Assume we have a entity:
 
+```
 class Entity
 {
   Public Guid Id { get; set; }
@@ -12,9 +12,11 @@ class Entity
   public Entity Parent { get; set; }
   public ISet<Entity> Children { get; set; }
 }
+```
 
 With the following map
 
+```
 class EntityMap : Classmap<Entity>
 {
   public EntityMap()
@@ -25,9 +27,11 @@ class EntityMap : Classmap<Entity>
     this.References(x => x.Parent).Foreignkey("Parent_Id");
   }
 }
+```
 
 Now we create our first data, assuming we have a fresh session (which is committed and flushed at the end of unit etc)
 
+```
 // session 1
 Guid parentId = Guid.NewGuid();
 Guid childId= Guid.NewGuid();
@@ -41,9 +45,11 @@ Guid childId= Guid.NewGuid();
   // transaction.Commit()
   session.Flush();
 }
+```
 
 In some other session we create our child data and assign parent:
 
+```
 // session 2
 {
   using ISession session = OpenSession();
@@ -57,20 +63,23 @@ In some other session we create our child data and assign parent:
   session.SaveOrUpdate(parent, child);
   session.Flush();
 }
+```
 
-Current behavior:
+**Current behavior:**
 Nhibernate generates:
-
+```
   update "Entity" set "RowVersion"=2 where "Id" = parentId;
   insert into "Entity" (Id, RowVersion) values (childId, 1);
+```
 
-Expected behavior:
+**Expected behavior:**
 "parent" (identified by "parentId") remains unchanged (RowVersion 1) since it was not changed.
-
+```
   insert into Entity (Id, RowVersion) Values childId, 1);
+```
 
 Test:
-
+```
 // session 3
 {
   using ISession session = OpenSession();
@@ -81,3 +90,4 @@ Test:
   Assert.AreEqual(1, parent.RowVersion);
   Assert.AreEqual(1, child.RowVersion);
 }
+```
