@@ -1,8 +1,10 @@
 # NHibernateExample.UnchangedEntityUpdated
 An NHibernate example which shows a entity is updated despite its not changed. 
-FluentNHibernate** for this example.
+
+I'm using **FluentNHibernate** for this example.
 The following is pseudocode.
-Assume we have a entity:
+
+Assume we have an entity:
 
 ```
 class Entity
@@ -29,13 +31,13 @@ class EntityMap : Classmap<Entity>
 }
 ```
 
-Now we create our first data, assuming we have a fresh session (which is committed and flushed at the end of unit etc)
+We create our first data (with a fresh session which is committed and flushed at the end etc)
 
 ```
-// session 1
 Guid parentId = Guid.NewGuid();
 Guid childId= Guid.NewGuid();
 
+// session 1
 {
   using ISession session = OpenSession();
   // session.BeginTransaction(ReadCommitted);
@@ -65,17 +67,17 @@ In some other session we create our child data and assign parent:
 }
 ```
 
-**Current behavior:**
-Nhibernate generates:
+**Current behavior:**  
+Nhibernate generates SQL which is updating the entities RowVersion and nothing else.
 ```
   update "Entity" set "RowVersion"=2 where "Id" = parentId;
   insert into "Entity" (Id, RowVersion) values (childId, 1);
 ```
 
-**Expected behavior:**
+**Expected behavior:**  
 "parent" (identified by "parentId") remains unchanged (RowVersion 1) since it was not changed.
 ```
-  insert into Entity (Id, RowVersion) Values childId, 1);
+  insert into Entity (Id, RowVersion) values (childId, 1);
 ```
 
 Test:
@@ -91,3 +93,4 @@ Test:
   Assert.AreEqual(1, child.RowVersion);
 }
 ```
+
