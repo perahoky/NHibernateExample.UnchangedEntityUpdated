@@ -6,6 +6,10 @@ namespace NHibernateExample.UnchangedEntityUpdated;
 
 internal static class Program
 {
+	private static Lazy<ILog> log = new(() => LogManager.GetLogger(typeof(Program)));
+
+	public static ILog Log => Program.log.Value;
+
 	public static void Main(string[] args)
 	{
 		Program.TryCatchConsole(() =>
@@ -25,21 +29,20 @@ internal static class Program
 		Console.SetError(Console.Out);
 
 		log4net.Config.XmlConfigurator.Configure(new FileInfo("log4net.config"));
-		var log = LogManager.GetLogger(typeof(Program));
-		log.Info("Logging initialized");
-		log.Info("Logging file (nhibernate-example.log) contains the nhibernate log.");
+
+		Program.Log.Info("Logging initialized");
+		Program.Log.Info("Logging file (nhibernate-example.log) contains the nhibernate log.");
 	}
 
 	private static void WriteWelcome()
 	{
-		var log = LogManager.GetLogger(typeof(Program));
-
-		log.Info(new string('-', Console.BufferWidth - 10));
-		log.Info("NHibernate Example");
-		log.Info(string.Empty);
-		log.Info("RowVersion is updated even when entity is not changed.");
-		log.Info("Entites whose collections are dirty will be updated, even if there is nothing else to be updated, resulting in an update of the rowversion only.");
-		log.Info(new string('-', Console.BufferWidth - 10));
+		Program.Log.Info(new string('-', Console.BufferWidth - 10));
+		Program.Log.Info("NHibernate Example");
+		Program.Log.Info(string.Empty);
+		Program.Log.Info("RowVersion is updated even when entity is not changed.");
+		Program.Log.Info("Entities whose collections are dirty will be updated, even if there is nothing else to be updated, resulting in an update of the rowversion only.");
+		Program.Log.Info("It is expected that nhibernate does not update entities if there is nothing else to be updated except the rowversion.");
+		Program.Log.Info(new string('-', Console.BufferWidth - 10));
 	}
 
 	private static void TryCatchConsole(Action action)
@@ -51,12 +54,12 @@ internal static class Program
 		catch (Exception ex)
 		{
 			Console.ForegroundColor = ConsoleColor.Red;
-			Console.WriteLine(new string('-', 20));
+			Console.WriteLine(new string('-', Console.BufferWidth - 10));
 			Console.WriteLine(ex);
 		}
 		finally
 		{
-			Console.WriteLine(new string('-', 20));
+			Console.WriteLine(new string('-', Console.BufferWidth - 10));
 			Console.ResetColor();
 			Console.WriteLine();
 			Console.WriteLine("Press any key to exit...");

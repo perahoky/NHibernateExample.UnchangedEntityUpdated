@@ -11,5 +11,7 @@ public class TestEntityMap : AbstractPersistableBaseMap<TestEntity>
 
 		this.HasMany(x => x.Children)
 			.Inverse();
+
+		this.Map(x => x.Name).Not.Nullable();
 	}
 }

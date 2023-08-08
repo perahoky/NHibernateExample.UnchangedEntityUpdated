@@ -29,11 +29,12 @@ internal class Example : AbstractExample<Example>
 
 		this.Log.Info(string.Empty);
 		this.Log.Info(" ### Starting example: ###");
-		this.Log.Info(string.Empty);
 
+		this.Log.Info(string.Empty);
 		this.Log.Info("1) Create test entity 'parent' ... ");
 		this.Step1CreateParent(parentId, childId);
 
+		this.Log.Info(string.Empty);
 		this.Log.Info("2) Create test entity 'child', load 'parent' and add 'child' to 'parent.Children'-collection ... ");
 		this.Step2CreateChildAndAssignParent(parentId, childId);
 
@@ -65,6 +66,8 @@ internal class Example : AbstractExample<Example>
 			repository.SaveOrUpdate(parent);
 
 			Assert.AreEqual(1, parent.RowVersion, "rowversion should be 1 after saving.");
+
+			this.Log.Info(parent);
 		});
 	}
 
@@ -88,6 +91,8 @@ internal class Example : AbstractExample<Example>
 
 			repository.SaveOrUpdate(child, parent);
 			Assert.AreEqual(1, parent.RowVersion, "rowversion should be 1 after saving.");
+			this.Log.Info(parent);
+			this.Log.Info(child);
 		});
 	}
 
@@ -98,6 +103,9 @@ internal class Example : AbstractExample<Example>
 			var repository = new TestEntityRepository(session);
 			TestEntity parent = repository.QueryOneById(parentId);
 			TestEntity child = repository.QueryOneById(childId);
+
+			this.Log.Info(parent);
+			this.Log.Info(child);
 
 			Assert.IsNotNull(child.Parent, "child.Parent should be not null because 'parent' was assigned to 'child.Parent' in previous transaction.");
 			Assert.AreEqual(1, parent.RowVersion, "rowversion of 'parent' should be 1 after loading because it was not intended to be changed.");
@@ -149,13 +157,6 @@ internal class Example : AbstractExample<Example>
 	private IPersistenceConfigurer CreateSqliteConfiguration()
 	{
 		string sqliteFilePath = Example.sqliteFilePath;
-		////if (File.Exists(sqliteFilePath))
-		////{
-		////	File.Delete(sqliteFilePath);
-
-		////	using var fileStream = new FileStream(sqliteFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
-		////	fileStream.SetLength(0L);
-		////}
 
 		this.Log.Info("Initialize with sqlite ... ");
 		this.Log.Info($"Using file {sqliteFilePath}");

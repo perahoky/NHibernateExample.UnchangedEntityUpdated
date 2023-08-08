@@ -26,4 +26,23 @@ public class TestEntity : AbstractPersistableBase
 	public virtual TestEntity? Parent { get; set; }
 
 	public virtual string? Name { get; set; }
+
+	public override string ToString()
+	{
+		var text = $"{nameof(TestEntity)}: '{this.Name}'";
+
+		text += $" Id:{this.Id} RowVersion:{this.RowVersion}";
+
+		if (this.Children.Count > 0)
+		{
+			text += $" Children: {this.Children.Count}";
+		}
+
+		if (this.Parent is not null)
+		{
+			text += $" Parent.Name:'{this.Parent.Name}'";
+		}
+
+		return text;
+	}
 }
